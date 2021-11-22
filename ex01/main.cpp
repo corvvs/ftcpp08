@@ -7,7 +7,7 @@
 #include "Constants.hpp"
 
 void    say(const std::string& str) {
-    std::cout << str << std::endl;
+    std::cout << std::endl << str << std::endl << std::endl;
 }
 
 time_t gettime(void) {
@@ -17,6 +17,7 @@ time_t gettime(void) {
 }
 
 void    self_assignation(void) {
+    say("[ self assignation ]");
     try {
         span sp(2);
         sp.addNumber(1);
@@ -42,16 +43,33 @@ void    self_assignation(void) {
     }
 }
 
+void    overflow_test(void) {
+    say("[ overflow ]");
+    span sp(4);
+    sp.addNumber(INT_MAX);
+    sp.addNumber(INT_MIN + 1);
+    std::cout << sp.shortestSpan() << " " << sp.longestSpan() << std::endl;
+    sp.addNumber(INT_MIN);
+    std::cout << sp.shortestSpan() << " " << sp.longestSpan() << std::endl;
+    sp.addNumber(INT_MIN);
+    std::cout << sp.shortestSpan() << " " << sp.longestSpan() << std::endl;
+}
+
 void    random_large_test(void) {
+    say("[ large random ]");
     std::srand((unsigned int) std::time(NULL));
-    unsigned int N = 10;
+    unsigned int N = 100000;
     span sp(N);
+    std::cout << "RAND_MAX: " << RAND_MAX << std::endl;
     for (unsigned i = 0; i <= N; i += 1) {
         try {
-            int k = rand();
+            // int k = static_cast<double>(rand()) * (1 - 2 * (rand() % 2));
+            int k = static_cast<double>(rand() - rand()) / RAND_MAX * (INT_MAX / 10);
             sp.addNumber(k);
-            if (i % 1000 == 0) {
-                std::cout << i << " " << sp.shortestSpan() << " " << sp.longestSpan() << std::endl;
+            unsigned int shortest = sp.shortestSpan();
+            if (i % (N / 20) == 0) {
+                unsigned int longest = sp.longestSpan();
+                std::cout << i << " " << shortest << " " << longest << std::endl;
             }
         } catch(std::exception& e) {
             std::cout
@@ -68,5 +86,6 @@ int main() {
     // std::cout << arr[0] << " " << t3 - t2 << std::endl;
     // time_t t1 = gettime();
     self_assignation();
+    overflow_test();
     random_large_test();
 }

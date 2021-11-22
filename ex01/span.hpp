@@ -1,12 +1,15 @@
 #ifndef CPP08_SPAN_HPP_
 # define CPP08_SPAN_HPP_
 
+# include <iostream>
 # include <set>
 # include <algorithm>
 # include <exception>
 # include <stdexcept>
+# include <cmath>
 # include <cstdlib>
 # include <climits>
+# include "Constants.hpp"
 
 class span {
     public:
@@ -41,6 +44,7 @@ class span {
         unsigned int    shortest_span_;
         int             stored_max_;
         int             stored_min_;
+        bool            switched_;
 };
 
 #endif
