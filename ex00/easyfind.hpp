@@ -4,18 +4,15 @@
 # include <algorithm>
 
 template< class T, class A >
-int absfind(T arr, A value) {
-    typename T::iterator ibegin = std::begin(arr);
-    typename T::iterator iend = std::end(arr);
+typename T::iterator absfind(T& arr, A value) {
+    typename T::iterator ibegin = arr.begin();
+    typename T::iterator iend = arr.end();
     typename T::iterator result = std::find(ibegin, iend, value);
-    if (result == iend) {
-        throw std::runtime_error("not found");
-    }
-    return *result;
+    return result;
 }
 
 template< class T >
-int easyfind(T arr, int value) {
+typename T::iterator easyfind(T& arr, int value) {
     return absfind(arr, value);
 }
 
