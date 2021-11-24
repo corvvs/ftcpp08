@@ -20,30 +20,30 @@ bool    subtractionWillOverflow(int a, int b) {
     return false;
 }
 
-span::IllegalConstructionError::IllegalConstructionError(const char *_message):
+Span::IllegalConstructionError::IllegalConstructionError(const char *_message):
     std::runtime_error(_message) {}
-span::CapacityFullError::CapacityFullError(const char *_message):
+Span::CapacityFullError::CapacityFullError(const char *_message):
     std::runtime_error(_message) {}
-span::NoSpanError::NoSpanError(const char *_message):
+Span::NoSpanError::NoSpanError(const char *_message):
     std::runtime_error(_message) {}
 
-span::span() {
-    throw span::IllegalConstructionError("default constructor is not allowed");
+Span::Span() {
+    throw Span::IllegalConstructionError("default constructor is not allowed");
 }
 
-span::span(const unsigned int N):
+Span::Span(const unsigned int N):
     N_(N), added_(0), items_(std::set<int>()),
     shortest_span_(UINT_MAX),
-    stored_max_(INT_MIN), stored_min_(INT_MAX), switched_(false)
+    stored_max_(INT_MIN), stored_min_(INT_MAX)
     {}
 
-span::span(const span &from):
+Span::Span(const Span &from):
     N_(from.N_), added_(from.added_), items_(from.items_),
     shortest_span_(from.shortest_span_),
-    stored_max_(from.stored_max_), stored_min_(from.stored_min_), switched_(false)
+    stored_max_(from.stored_max_), stored_min_(from.stored_min_)
     {}
 
-span& span::operator=(const span &rhs) {
+Span& Span::operator=(const Span &rhs) {
     N_ = rhs.N_;
     added_ = rhs.added_;
     items_ = std::set<int>(rhs.items_);
@@ -53,37 +53,35 @@ span& span::operator=(const span &rhs) {
     return *this;
 }
 
-span::~span() {}
+Span::~Span() {}
 
-void    span::addNumber(int item) {
+void    Span::addNumber(int item) {
     if (N_ <= added_) {
-        throw span::CapacityFullError("this object is full");
+        throw Span::CapacityFullError("this object is full");
     }
-    std::set<int>::iterator itend = items_.end();
-    if (items_.find(item) != itend) {
-        shortest_span_ = 0;
-    } else if (switched_) {
-        int ss = static_cast<int>(shortest_span_);
-        for (int i = 1; i < ss; i += 1) {
-            if (!additionWillOverflow(item, i) && items_.find(item + i) != itend) {
-                shortest_span_ = i;
-                break;
+    if (shortest_span_ > 0) {
+        std::set<int>::iterator itend = items_.end();
+        if (items_.find(item) != itend) {
+            shortest_span_ = 0;
+        } else {
+            std::set<int>::iterator lb = items_.lower_bound(item);
+            std::set<int>::iterator be = items_.begin();
+            std::set<int>::iterator ed = items_.end();
+            if (lb != ed) {
+                unsigned int span = *lb - item;
+                if (span < shortest_span_) {
+                    shortest_span_ = span;
+                }
             }
-            if (!subtractionWillOverflow(item, i) && items_.find(item - i) != itend) {
-                shortest_span_ = i;
-                break;
+            if (lb != be) {
+                --lb;
+                unsigned int span = item - *lb;
+                if (span < shortest_span_) {
+                    shortest_span_ = span;
+                }
             }
+            items_.insert(item);
         }
-        items_.insert(item);
-    } else {
-        std::set<int>::iterator itbegin = items_.begin();
-        for (std::set<int>::iterator it = itbegin; it != itend; ++it) {
-            unsigned int span = *it > item ? *it - item : item - *it;
-            if (span < shortest_span_) {
-                shortest_span_ = span;
-            }
-        }
-        items_.insert(item);
     }
     added_ += 1;
     if (stored_max_ < item) {
@@ -100,25 +98,18 @@ void    span::addNumber(int item) {
         //     << Constants::kTextReset << std::endl;
         stored_min_ = item;
     }
-    if (!switched_ && shortest_span_ < INT_MAX && shortest_span_ * std::log2(added_) < added_) {
-        switched_ = true;
-        std::cout
-            << Constants::kTextDebug
-            << added_ << ": algorithm switched"
-            << Constants::kTextReset << std::endl;
-    }
 }
 
-unsigned int    span::longestSpan(void) const {
+unsigned int    Span::longestSpan(void) const {
     if (added_ < 2) {
-        throw span::NoSpanError("there is no span");
+        throw Span::NoSpanError("there is no Span");
     }
     return stored_max_ - stored_min_;
 }
 
-unsigned int    span::shortestSpan(void) const {
+unsigned int    Span::shortestSpan(void) const {
     if (added_ < 2) {
-        throw span::NoSpanError("there is no span");
+        throw Span::NoSpanError("there is no Span");
     }
     return shortest_span_;
 }

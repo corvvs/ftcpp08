@@ -48,14 +48,26 @@ time_t gettime(void) {
     return (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
 }
 
+void    pdf_test(void) {
+    say("[ PDF test ]");
+    Span sp = Span(5);
+    sp.addNumber(5);
+    sp.addNumber(3);
+    sp.addNumber(17);
+    sp.addNumber(9);
+    sp.addNumber(11);
+    tester("shortest is", sp.shortestSpan(), 2u);
+    tester("longest is", sp.longestSpan(), 14u);
+}
+
 void    blank_span(void) {
-    say("[ blank span ]");
+    say("[ blank Span ]");
     try {
         std::cout
             << Constants::kTextWarning
-            << "make a size 0 span." << std::endl
+            << "make a size 0 Span." << std::endl
             << Constants::kTextReset;
-        span sp(0);
+        Span sp(0);
         std::cout
             << Constants::kTextWarning
             << "made it!" << std::endl
@@ -68,20 +80,50 @@ void    blank_span(void) {
     }
 }
 
+
+void    duplication_test(void) {
+    say("[ duplication ]");
+    try {
+        std::cout
+            << Constants::kTextWarning
+            << "make a size 2 Span, and add two 1." << std::endl
+            << Constants::kTextReset;
+        Span sp(2);
+        sp.addNumber(1);
+        sp.addNumber(1);
+        tester("shortest of sp is", sp.shortestSpan(), 0u);
+        tester("longest of sp is", sp.longestSpan(), 0u);
+        std::cout
+            << Constants::kTextWarning
+            << "ok, and one more 1." << std::endl
+            << Constants::kTextReset;
+        sp.addNumber(1);
+    } catch(std::exception& e) {
+        std::cout
+            << Constants::kTextError
+            << e.what()
+            << Constants::kTextReset << std::endl;
+    }
+    std::cout
+        << Constants::kTextWarning
+        << "did you see an exception?" << std::endl
+        << Constants::kTextReset;
+}
+
 void    self_assignation(void) {
     say("[ self assignation ]");
     try {
-        span sp(2);
+        Span sp(2);
         sp.addNumber(1);
         try {
             std::cout
                 << Constants::kTextWarning
-                << "construct a span sp2 by copying another span sp." << std::endl
-                << "old and new span's are independent." << std::endl
+                << "construct a Span sp2 by copying another Span sp." << std::endl
+                << "old and new Span's are independent." << std::endl
                 << "add 2 into sp2 and get shortest span." << std::endl
                 << "sp2 has only 1 number, so an exception will be caused." << std::endl
                 << Constants::kTextReset;
-            span sp2(sp);
+            Span sp2(sp);
             sp2.addNumber(2);
             std::cout << sp2.shortestSpan() << " " << sp2.longestSpan() << std::endl;
             sp2.addNumber(3);
@@ -94,12 +136,12 @@ void    self_assignation(void) {
         try {
             std::cout
                 << Constants::kTextWarning
-                << "now, assign span sp into another span sp3." << std::endl
-                << "old and new span's are independent." << std::endl
+                << "now, assign Span sp into another Span sp3." << std::endl
+                << "old and new Span's are independent." << std::endl
                 << "add 2 into sp3 and get shortest span." << std::endl
                 << "sp3 has only 1 number, so an exception will be caused." << std::endl
                 << Constants::kTextReset;
-            span sp3(10000000);
+            Span sp3(10000000);
             sp3 = sp;
             std::cout << sp3.shortestSpan() << " " << sp3.longestSpan() << std::endl;
             sp3.addNumber(3);
@@ -135,10 +177,10 @@ void    uniform_large_test(void) {
     std::cout
         << Constants::kTextWarning
         << "adding arithmetic sequence." << std::endl
-        << "their distance is very large, so the algorithm doesn't work well." << std::endl
+        << "the distance is very large, so the algorithm doesn't work well." << std::endl
         << Constants::kTextReset;
     unsigned int N = 10000;
-    span sp(N);
+    Span sp(N);
     for (unsigned i = 0; i <= N; i += 1) {
         try {
             int k = static_cast<double>(RAND_MAX) / N * i;
@@ -164,9 +206,9 @@ void    random_large_test(void) {
         << Constants::kTextWarning
         << "adding many random numbers." << std::endl
         << Constants::kTextReset;
-    // std::srand((unsigned int) std::time(NULL));
+    std::srand((unsigned int) std::time(NULL));
     unsigned int N = 100000;
-    span sp(N);
+    Span sp(N);
     std::cout << "RAND_MAX: " << RAND_MAX << std::endl;
     for (unsigned i = 0; i <= N; i += 1) {
         try {
@@ -197,7 +239,7 @@ void    iterator_test() {
         << "and longest span is 99900 - 0 = 99900." << std::endl
         << Constants::kTextReset;
     int N = 1000;
-    span                sp(N);
+    Span                sp(N);
     std::vector<int>    vec;
     for (int i = 0; i < N; i += 1) { 
         vec.push_back(i * 100);
@@ -214,7 +256,7 @@ void    widespread_test() {
         << "add INT_MAX and INT_MIN." << std::endl
         << "both shortest and longest span are INT_MAX - INT_MIN = UINT_MAX." << std::endl
         << Constants::kTextReset;
-    span sp(4);
+    Span sp(4);
     sp.addNumber(INT_MAX);
     sp.addNumber(INT_MIN);
     tester("shortest is", sp.shortestSpan(), UINT_MAX);
@@ -231,7 +273,9 @@ void    widespread_test() {
 }
 
 int main() {
+    pdf_test();
     blank_span();
+    duplication_test();
     self_assignation();
     random_large_test();
     uniform_large_test();

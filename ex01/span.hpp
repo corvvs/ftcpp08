@@ -11,7 +11,7 @@
 # include <climits>
 # include "Constants.hpp"
 
-class span {
+class Span {
     public:
         class IllegalConstructionError: public std::runtime_error {
             public:
@@ -26,10 +26,10 @@ class span {
                 NoSpanError(const char *_message);
         };
 
-        span(const unsigned int N);
-        span(const span &from);
-        span& operator=(const span &rhs);
-        virtual ~span();
+        Span(const unsigned int N);
+        Span(const Span &from);
+        Span& operator=(const Span &rhs);
+        virtual ~Span();
 
         void            addNumber(int item);
 
@@ -49,7 +49,7 @@ class span {
         unsigned int    longestSpan(void) const;
 
     private:
-        span();
+        Span();
 
         unsigned int    N_;
         unsigned int    added_;
@@ -57,7 +57,6 @@ class span {
         unsigned int    shortest_span_;
         int             stored_max_;
         int             stored_min_;
-        bool            switched_;
 };
 
 #endif
