@@ -5,6 +5,7 @@
 
 # ifdef COLORLESS
 namespace Constants {
+    const std::string kTextDebug        = "";
     const std::string kTextInfo         = "";
     const std::string kTextWarning      = "";
     const std::string kTextError        = "";
@@ -13,6 +14,7 @@ namespace Constants {
 }
 # else
 namespace Constants {
+    const std::string kTextDebug        = "\x1B[90m";
     const std::string kTextInfo         = "\x1B[92m";
     const std::string kTextWarning      = "\x1B[95m";
     const std::string kTextError        = "\x1B[91m";

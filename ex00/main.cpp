@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cstdlib>
-#include <sstream>
 #include "easyfind.hpp"
 #include <vector>
 #include <list>
@@ -13,8 +12,6 @@
 void    say(const std::string& str) {
     std::cout << str << std::endl;
 }
-
-std::stringstream ss;
 
 template <typename Result>
 void    tester(
@@ -45,13 +42,6 @@ void    tester(
     if (!ok && !ignorable) {
         throw std::string("** detected KO test **");
     }
-}
-
-std::string stringify(void) {
-    std::string res;
-    res = ss.str();
-    ss.str("");
-    return res;
 }
 
 template<class T>

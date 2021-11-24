@@ -32,6 +32,19 @@ class span {
         virtual ~span();
 
         void            addNumber(int item);
+
+        template < class Iterator >
+        void            addNumbers(
+            Iterator begin,
+            Iterator end
+        ) {
+            Iterator it = begin;
+            for (; it != end; ++it) {
+                int n = *it;
+                addNumber(n);
+            }
+        }
+
         unsigned int    shortestSpan(void) const;
         unsigned int    longestSpan(void) const;
 

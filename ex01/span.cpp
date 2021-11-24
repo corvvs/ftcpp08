@@ -103,7 +103,7 @@ void    span::addNumber(int item) {
     if (!switched_ && shortest_span_ < INT_MAX && shortest_span_ * std::log2(added_) < added_) {
         switched_ = true;
         std::cout
-            << Constants::kTextInfo
+            << Constants::kTextDebug
             << added_ << ": algorithm switched"
             << Constants::kTextReset << std::endl;
     }
