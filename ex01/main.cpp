@@ -48,6 +48,26 @@ time_t gettime(void) {
     return (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
 }
 
+void    blank_span(void) {
+    say("[ blank span ]");
+    try {
+        std::cout
+            << Constants::kTextWarning
+            << "make a size 0 span." << std::endl
+            << Constants::kTextReset;
+        span sp(0);
+        std::cout
+            << Constants::kTextWarning
+            << "made it!" << std::endl
+            << Constants::kTextReset;
+    } catch(std::exception& e) {
+        std::cout
+            << Constants::kTextError
+            << e.what()
+            << Constants::kTextReset << std::endl;
+    }
+}
+
 void    self_assignation(void) {
     say("[ self assignation ]");
     try {
@@ -211,6 +231,7 @@ void    widespread_test() {
 }
 
 int main() {
+    blank_span();
     self_assignation();
     random_large_test();
     uniform_large_test();

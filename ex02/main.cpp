@@ -18,21 +18,31 @@ template <typename Result>
 void    tester(
     const std::string& title,
     const Result& result,
-    const Result& expected
+    const Result& expected,
+    const bool ignorable = false
 ) {
-    const std::string color = (result == expected) ? Constants::kTextInfo : Constants::kTextError;
+    bool ok = result == expected;
+    const std::string color =
+        ok
+            ? Constants::kTextInfo
+            : ignorable
+                ? Constants::kTextWarning
+                : Constants::kTextError;
     std::cout
         << color
-        << ">> "
+        << ((result == expected) ? "[ok] " : "[KO] ")
         << title
         << ": "
         << std::boolalpha << result;
-    if (result != expected) {
+    if (!ok) {
         std::cout
             << "(expected: " << expected << ")";
     }
     std::cout
         << Constants::kTextReset << std::endl;
+    if (!ok && !ignorable) {
+        throw std::string("** detected KO test **");
+    }
 }
 
 template <class MContainer>
@@ -179,13 +189,13 @@ void    comparation_test(void) {
             tester(" ms1(0).begin() == ms1(0).end()",      b1  ==   e1,  true);
             tester(" ms1(0).end()   == ms1(0).end()",      e1  ==   e1,  true);
 
-            tester("(should be ok for deque or vector) ms1(0).begin() == ms2(0).begin()",    b1  ==   b2,  true);
-            tester("(should be ok for deque or vector) ms1(0).begin() == ms2(0).end()",      b1  ==   e2,  true);
-            tester("(should be ok for deque or vector) ms1(0).end()   == ms2(0).end()",      e1  ==   e2,  true);
+            tester("(should be ok for deque or vector) ms1(0).begin() == ms2(0).begin()",    b1  ==   b2,  true, true);
+            tester("(should be ok for deque or vector) ms1(0).begin() == ms2(0).end()",      b1  ==   e2,  true, true);
+            tester("(should be ok for deque or vector) ms1(0).end()   == ms2(0).end()",      e1  ==   e2,  true, true);
             tester(" ms2(0).begin() == ms2(0).end()",      b2  ==   e2,  true);
-            tester("(should be ok for deque or vector)&ms1(0).begin() == &ms2(0).begin()", &(*b1) == &(*b2), true);
-            tester("(should be ok for deque or vector)&ms1(0).begin() == &ms2(0).end()",   &(*b1) == &(*e2), true);
-            tester("(should be ok for deque or vector)&ms1(0).end()   == &ms2(0).end()",   &(*e1) == &(*e2), true);
+            tester("(should be ok for deque or vector)&ms1(0).begin() == &ms2(0).begin()", &(*b1) == &(*b2), true, true);
+            tester("(should be ok for deque or vector)&ms1(0).begin() == &ms2(0).end()",   &(*b1) == &(*e2), true, true);
+            tester("(should be ok for deque or vector)&ms1(0).end()   == &ms2(0).end()",   &(*e1) == &(*e2), true, true);
             ms1.push(1);
             std::cout << "pushed 1 into ms1" << std::endl;
             b1 = ms1.begin();
@@ -211,7 +221,7 @@ void    comparation_test(void) {
             MS ms3;
             typename MS::iterator s3 = ms3.begin();
             typename MS::iterator e3 = ms3.end();
-            tester("(should be ok for deque or vector) ms2(0).end()   == ms3(0).end()",      e2  ==   e3,  true);
+            tester("(should be ok for deque or vector) ms2(0).end()   == ms3(0).end()",      e2  ==   e3,  true, true);
             tester(" ms3(0).start() == ms3(0).end()",      s3  ==   e3,  true);
 
             ms1.pop();
