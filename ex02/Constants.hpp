@@ -1,5 +1,5 @@
-#ifndef CPP06_EX00_CONSTANTS_HPP_
-# define CPP06_EX00_CONSTANTS_HPP_
+#ifndef CPP08_CONSTANTS_HPP_
+# define CPP08_CONSTANTS_HPP_
 
 # include <string>
 

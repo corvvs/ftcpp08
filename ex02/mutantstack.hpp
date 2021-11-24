@@ -3,132 +3,63 @@
 
 # include <iostream>
 # include <stack>
-# include <vector>
+# include <deque>
 # include "Constants.hpp"
 
-template <class T>
-class MutantStack: public std::stack<T> {
+template <class T, class _MContainer = std::deque<T> >
+class MutantStack: public std::stack<T, _MContainer> {
     public:
-        class iterator {
-            public:
-                iterator(const MutantStack<T>& ref, const std::size_t index):
-                    ref_(ref), index_(index) {}
-
-                iterator(const iterator& from):
-                    ref_(from.ref_), index_(from.index_) {}
-
-                virtual ~iterator() {}
-
-                iterator&   operator=(const iterator &rhs) {
-                    ref_ = rhs.ref_;
-                    index_ = rhs.index_;
-                    return *this;
-                }
-
-                T&          operator*() _NOEXCEPT {
-                    return const_cast<T&>(ref_.vec_[index_]);
-                }
-                T           operator*() const _NOEXCEPT {
-                    return ref_.vec_[index_];
-                }
-
-                iterator&   operator++() {
-                    if (index_ != EndIndex) {
-                        index_ -= 1;
-                    }
-                    return *this;
-                }
-
-                iterator    operator++(int) {
-                    iterator rit = *this;
-                    ++this;
-                    return rit;
-                }
-
-                iterator&   operator--() {
-                    if (index_ < ref_.size()) {
-                        index_ += 1;
-                    }
-                    return *this;
-                }
-
-                iterator    operator--(int) {
-                    iterator rit = *this;
-                    --this;
-                    return rit;
-                }
-
-                bool    isEnd(void) const {
-                    return index_ == EndIndex;
-                }
-
-        bool    operator!=(const typename MutantStack<T>::iterator& rhs) {
-            return !(*this == rhs);
-        }
-
-        bool    operator==(const typename MutantStack<T>::iterator& rhs) {
-            return index_ == rhs.index_;
-        }
-            private:
-                const MutantStack<T>&   ref_;
-                std::size_t             index_;
-        };
+        typedef typename _MContainer::iterator                  iterator;
+        typedef typename _MContainer::const_iterator            const_iterator;
+        typedef typename _MContainer::reverse_iterator          reverse_iterator;
+        typedef typename _MContainer::const_reverse_iterator    const_reverse_iterator;
 
         MutantStack():
-            std::stack<T>(), vec_(std::vector<T>()) {}
-
-        MutantStack(const MutantStack<T>& from):
-            std::stack<T>(from), vec_(from.vec_) {}
+            std::stack<T, _MContainer>() {}
+        MutantStack(const MutantStack<T, _MContainer>& from):
+            std::stack<T, _MContainer>(from) {}
 
         virtual ~MutantStack() {}
 
-        MutantStack<T>&   operator=(const MutantStack<T> &rhs) {
-            *(static_cast<std::stack<T> *>(this)) = rhs;
-            vec_ = rhs.vec_;
-            return *this;
+        iterator                begin(void) {
+            _MContainer& mc = this->c;
+            return mc.begin();
         }
 
-        iterator    begin(void) const {
-            std::size_t n = this->size() - 1;
-            iterator it(*this, n);
-            return it;
+        iterator                end(void) {
+            _MContainer& mc = this->c;
+            return mc.end();
         }
 
-        iterator    end(void) const {
-            std::size_t n = -1;
-            iterator it(*this, n);
-            return it;
+        const_iterator          begin(void) const {
+            const _MContainer& mc = this->c;
+            return mc.begin();
         }
 
-        void        push(const T& v) {
-            this->std::stack<T>::push(v);
-            if (vec_.size() < this->size()) {
-                std::cout
-                    << Constants::kTextInfo
-                    << "push " << v
-                    << Constants::kTextReset << std::endl;
-                vec_.push_back(v);
-            } else {
-                std::cout
-                    << Constants::kTextInfo
-                    << "assign " << v << " at " << this->size() - 1
-                    << Constants::kTextReset << std::endl;
-                vec_[this->size() - 1] = v;
-            }
+        const_iterator          end(void) const {
+            const _MContainer& mc = this->c;
+            return mc.end();
         }
 
-        void        pop(void) {
-            std::cout
-                << Constants::kTextInfo
-                << "pop"
-                << Constants::kTextReset << std::endl;
-            this->std::stack<T>::pop();
+        reverse_iterator        rbegin(void) {
+            _MContainer& mc = this->c;
+            return mc.rbegin();
         }
 
-    private:
-        std::vector<T>   vec_;
+        reverse_iterator        rend(void) {
+            _MContainer& mc = this->c;
+            return mc.rend();
+        }
 
-        static const std::size_t EndIndex = -1;
+        const_reverse_iterator  rbegin(void) const {
+            const _MContainer& mc = this->c;
+            return mc.rbegin();
+        }
+
+        const_reverse_iterator  rend(void) const {
+            const _MContainer& mc = this->c;
+            return mc.rend();
+        }
 };
 
 
