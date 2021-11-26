@@ -179,44 +179,14 @@ void    uniform_large_test(void) {
         << "adding arithmetic sequence." << std::endl
         << "the distance is very large, so the algorithm doesn't work well." << std::endl
         << Constants::kTextReset;
-    unsigned int N = 10000;
+    unsigned int N = 1000000;
     Span sp(N);
     for (unsigned i = 0; i <= N; i += 1) {
         try {
             int k = static_cast<double>(RAND_MAX) / N * i;
             sp.addNumber(k);
-            unsigned int shortest = sp.shortestSpan();
             if (i % (N / 20) == 0) {
-                unsigned int longest = sp.longestSpan();
-                std::cout << i << " " << shortest << " " << longest << std::endl;
-            }
-        } catch(std::exception& e) {
-            std::cout
-                << Constants::kTextError
-                << e.what()
-                << Constants::kTextReset << std::endl;
-        }
-    }
-    std::cout << sp.shortestSpan() << " " << sp.longestSpan() << std::endl;
-}
-
-void    random_large_test(void) {
-    say("[ large random ]");
-    std::cout
-        << Constants::kTextWarning
-        << "adding many random numbers." << std::endl
-        << Constants::kTextReset;
-    std::srand((unsigned int) std::time(NULL));
-    unsigned int N = 100000;
-    Span sp(N);
-    std::cout << "RAND_MAX: " << RAND_MAX << std::endl;
-    for (unsigned i = 0; i <= N; i += 1) {
-        try {
-            // int k = static_cast<double>(rand()) * (1 - 2 * (rand() % 2));
-            int k = static_cast<double>(rand() - rand()) / RAND_MAX * (INT_MAX / 10);
-            sp.addNumber(k);
-            unsigned int shortest = sp.shortestSpan();
-            if (i % (N / 20) == 0) {
+                unsigned int shortest = sp.shortestSpan();
                 unsigned int longest = sp.longestSpan();
                 std::cout << i << " shortest: " << shortest << " longest: " << longest << std::endl;
             }
@@ -227,6 +197,40 @@ void    random_large_test(void) {
                 << Constants::kTextReset << std::endl;
         }
     }
+    tester("numbers the span has", sp.getAdded(), N);
+    tester("should be equal to N", sp.getN(), sp.getAdded());
+    std::cout << sp.shortestSpan() << " " << sp.longestSpan() << std::endl;
+}
+
+void    random_large_test(void) {
+    say("[ large random ]");
+    std::cout
+        << Constants::kTextWarning
+        << "adding many random numbers." << std::endl
+        << Constants::kTextReset;
+    std::srand((unsigned int) std::time(NULL));
+    unsigned int N = 10000000;
+    Span sp(N);
+    std::cout << "RAND_MAX: " << RAND_MAX << std::endl;
+    for (unsigned i = 0; i <= N; i += 1) {
+        try {
+            // int k = static_cast<double>(rand()) * (1 - 2 * (rand() % 2));
+            int k = static_cast<double>(rand() - rand()) / RAND_MAX * (INT_MAX / 10);
+            sp.addNumber(k);
+            if (i % (N / 20) == 0) {
+                unsigned int shortest = sp.shortestSpan();
+                unsigned int longest = sp.longestSpan();
+                std::cout << i << " shortest: " << shortest << " longest: " << longest << std::endl;
+            }
+        } catch(std::exception& e) {
+            std::cout
+                << Constants::kTextError
+                << e.what()
+                << Constants::kTextReset << std::endl;
+        }
+    }
+    tester("numbers the span has", sp.getAdded(), N);
+    tester("should be equal to N", sp.getN(), sp.getAdded());
     std::cout << sp.shortestSpan() << " " << sp.longestSpan() << std::endl;
 }
 

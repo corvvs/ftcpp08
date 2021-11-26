@@ -28,18 +28,34 @@ class Span {
 
         Span(const unsigned int N);
         Span(const Span &from);
-        Span& operator=(const Span &rhs);
-        virtual ~Span();
+        Span&           operator=(const Span &rhs);
+        virtual         ~Span();
+
+        unsigned int    getN(void) const;
+        unsigned int    getAdded(void) const;
 
         void            addNumber(int item);
 
-        template < class Iterator >
+        template <class SomeIterator>
         void            addNumbers(
-            Iterator begin,
-            Iterator end
+            SomeIterator begin,
+            SomeIterator end
         ) {
-            Iterator it = begin;
+            SomeIterator it = begin;
             for (; it != end; ++it) {
+                int n = *it;
+                addNumber(n);
+            }
+
+        }
+
+        template <class IterativeContainer>
+        void            addNumbers(
+            const IterativeContainer& c
+        ) {
+            typename IterativeContainer::const_iterator it = c.begin();
+            typename IterativeContainer::const_iterator ed = c.end();
+            for (; it != ed; ++it) {
                 int n = *it;
                 addNumber(n);
             }

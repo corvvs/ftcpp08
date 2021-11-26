@@ -1,25 +1,5 @@
 #include "span.hpp"
 
-bool    additionWillOverflow(int a, int b) {
-    if (a > 0 && b > 0 && a > INT_MAX - b) {
-        return true;
-    }
-    if (a < 0 && b < 0 && a < INT_MIN - b) {
-        return true;
-    }
-    return false;
-}
-
-bool    subtractionWillOverflow(int a, int b) {
-    if (a > 0 && b < 0 && a > INT_MAX + b) {
-        return true;
-    }
-    if (a < 0 && b > 0 && a < INT_MIN + b) {
-        return true;
-    }
-    return false;
-}
-
 Span::IllegalConstructionError::IllegalConstructionError(const char *_message):
     std::runtime_error(_message) {}
 Span::CapacityFullError::CapacityFullError(const char *_message):
@@ -43,7 +23,10 @@ Span::Span(const Span &from):
     stored_max_(from.stored_max_), stored_min_(from.stored_min_)
     {}
 
-Span& Span::operator=(const Span &rhs) {
+Span&   Span::operator=(const Span &rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
     N_ = rhs.N_;
     added_ = rhs.added_;
     items_ = std::set<int>(rhs.items_);
@@ -55,7 +38,15 @@ Span& Span::operator=(const Span &rhs) {
 
 Span::~Span() {}
 
-void    Span::addNumber(int item) {
+unsigned int    Span::getN(void) const {
+    return N_;
+}
+
+unsigned int    Span::getAdded(void) const {
+    return added_;
+}
+
+void            Span::addNumber(int item) {
     if (N_ <= added_) {
         throw Span::CapacityFullError("this object is full");
     }
@@ -85,17 +76,9 @@ void    Span::addNumber(int item) {
     }
     added_ += 1;
     if (stored_max_ < item) {
-        // std::cout
-        //     << Constants::kTextInfo
-        //     << "max: " << stored_max_ << " -> " << item
-        //     << Constants::kTextReset << std::endl;
         stored_max_ = item;
     }
     if (stored_min_ > item) {
-        // std::cout
-        //     << Constants::kTextInfo
-        //     << "min: " << stored_min_ << " -> " << item
-        //     << Constants::kTextReset << std::endl;
         stored_min_ = item;
     }
 }
