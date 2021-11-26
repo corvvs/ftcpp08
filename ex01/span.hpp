@@ -46,7 +46,6 @@ class Span {
                 int n = *it;
                 addNumber(n);
             }
-
         }
 
         template <class IterativeContainer>
