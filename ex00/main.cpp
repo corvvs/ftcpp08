@@ -58,43 +58,73 @@ void    print_container(T& c) {
     std::cout << "]" << std::endl;
 }
 
+template<class T>
+void    print_container(const T& c) {
+    typename T::const_iterator it = c.begin();
+    typename T::const_iterator et = c.end();
+    std::cout << "[";
+    for(; it != et; ++it) {
+        if (it != c.begin()) {
+            std::cout << ", ";
+        }
+        std::cout << *it;
+    }
+    std::cout << "]" << std::endl;
+}
+
 template < class Container >
 void find_test(
     Container& c,
     int should_found,
     int should_not_found
 ) {
-    typename Container::iterator result_it = easyfind(c, should_found);
-    say("find 313 from container.");
-    tester("found something",       result_it != c.end(),   true);
-    tester("found value is 314",    *result_it,             should_found);
-    say("find 1 from container.");
-    result_it = easyfind(c, should_not_found);
-    tester("not found 1",           result_it == c.end(),   true);
+    say("(variable test)");
+    {
+        std::cout << "a given container is: ";
+        print_container(c);
+        typename Container::iterator result_it = easyfind(c, should_found);
+        say("find 313 from the container.");
+        tester("found something",       result_it != c.end(),   true);
+        tester("found value is 313",    *result_it,             should_found);
+        // *result_it = 424242; // FAIL if a given container is a set.
+        say("find 1 from the container.");
+        result_it = easyfind(c, should_not_found);
+        tester("not found 1",           result_it == c.end(),   true);
+    }
+    say("(const test)");
+    {
+        const Container& cc = c;
+        std::cout << "a const container is: ";
+        print_container(cc);
+        typename Container::const_iterator result_it = easyfind(c, should_found);
+        say("find 313 from the container.");
+        tester("found something",       result_it != cc.end(),  true);
+        tester("found value is 313",    *result_it,             should_found);
+        // *result_it = 1; // error: cannot assign to return value because function 'operator*' returns a const value
+        say("find 1 from the container.");
+        result_it = easyfind(cc, should_not_found);
+        tester("not found 1",           result_it == cc.end(),  true);
+    }
 }
 
 int main() {
     const int args[] = {
-        -10, 100, 314, -15926535
+        -10, 100, 313, -15926535
     };
 
-    int should_found = 314;
+    int should_found = 313;
     int should_not_found = 1;
     int n = 4;
     try {
+        say("");
         say("[ vector ]");
+        say("");
         typedef std::vector<int> Container;
-        Container arr(n);
+        Container vec;
         for(int i = 0; i < n; i += 1) {
-            arr[i] = args[i];
+            vec.push_back(args[i]);
         }
-        std::cout << "container is: ";
-        print_container(arr);
-        say("(variable test)");
-        find_test(arr, should_found, should_not_found);
-        Container& carr = arr;
-        say("(const test)");
-        find_test(carr, should_found, should_not_found);
+        find_test(vec, should_found, should_not_found);
     } catch(std::exception& e) {
         std::cout
             << Constants::kTextError
@@ -102,21 +132,15 @@ int main() {
             << Constants::kTextReset << std::endl;
     }
     try {
+        say("");
         say("[ list ]");
+        say("");
         typedef std::list<int> Container;
-        Container arr(n);
+        Container lst;
         for(int i = 0; i < n; i += 1) {
-            arr.push_back(args[i]);
+            lst.push_back(args[i]);
         }
-        std::cout << "container is: ";
-        print_container(arr);
-        std::cout << "container is: ";
-        print_container(arr);
-        say("(variable test)");
-        find_test(arr, should_found, should_not_found);
-        Container& carr = arr;
-        say("(const test)");
-        find_test(carr, should_found, should_not_found);
+        find_test(lst, should_found, should_not_found);
     } catch(std::exception& e) {
         std::cout
             << Constants::kTextError
@@ -124,19 +148,15 @@ int main() {
             << Constants::kTextReset << std::endl;
     }
     try {
+        say("");
         say("[ set ]");
+        say("");
         typedef std::set<int> Container;
-        Container arr;
+        Container st;
         for(int i = 0; i < n; i += 1) {
-            arr.insert(args[i]);
+            st.insert(args[i]);
         }
-        std::cout << "container is: ";
-        print_container(arr);
-        say("(variable test)");
-        find_test(arr, should_found, should_not_found);
-        Container& carr = arr;
-        say("(const test)");
-        find_test(carr, should_found, should_not_found);
+        find_test(st, should_found, should_not_found);
     } catch(std::exception& e) {
         std::cout
             << Constants::kTextError
@@ -144,19 +164,15 @@ int main() {
             << Constants::kTextReset << std::endl;
     }
     try {
+        say("");
         say("[ deque ]");
+        say("");
         typedef std::deque<int> Container;
-        Container arr;
+        Container deq;
         for(int i = 0; i < n; i += 1) {
-            arr.push_back(args[i]);
+            deq.push_back(args[i]);
         }
-        std::cout << "container is: ";
-        print_container(arr);
-        say("(variable test)");
-        find_test(arr, should_found, should_not_found);
-        Container& carr = arr;
-        say("(const test)");
-        find_test(carr, should_found, should_not_found);
+        find_test(deq, should_found, should_not_found);
     } catch(std::exception& e) {
         std::cout
             << Constants::kTextError
