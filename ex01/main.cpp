@@ -45,7 +45,7 @@ void    tester(
 time_t gettime(void) {
     struct timeval time_now;
     gettimeofday(&time_now, nullptr);
-    return (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
+    return (time_now.tv_sec * 1000000) + (time_now.tv_usec);
 }
 
 void    pdf_test(void) {
@@ -184,7 +184,10 @@ void    uniform_large_test(void) {
     for (unsigned i = 0; i <= N; i += 1) {
         try {
             int k = static_cast<double>(RAND_MAX) / N * i;
+            // time_t ta = gettime();
             sp.addNumber(k);
+            // time_t tb = gettime();
+            // std::cerr << (tb - ta) << std::endl;
             if (i % (N / 20) == 0) {
                 unsigned int shortest = sp.shortestSpan();
                 unsigned int longest = sp.longestSpan();
@@ -216,7 +219,10 @@ void    random_large_test(void) {
         try {
             // int k = static_cast<double>(rand()) * (1 - 2 * (rand() % 2));
             int k = static_cast<double>(rand() - rand()) / RAND_MAX * (INT_MAX / 10);
+            // time_t ta = gettime();
             sp.addNumber(k);
+            // time_t tb = gettime();
+            // std::cerr << (tb - ta) << std::endl;
             if (i % (N / 20) == 0) {
                 unsigned int shortest = sp.shortestSpan();
                 unsigned int longest = sp.longestSpan();

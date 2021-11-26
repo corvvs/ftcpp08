@@ -6,7 +6,7 @@
 template< class T, class A >
 typename T::iterator        absfind(T& arr, const A& value) {
     typename T::iterator ibegin = arr.begin();
-    typename T::iterator iend = arr.end();
+    typename T::iterator iend   = arr.end();
     typename T::iterator result = std::find(ibegin, iend, value);
     return result;
 }
@@ -14,7 +14,7 @@ typename T::iterator        absfind(T& arr, const A& value) {
 template< class T, class A >
 typename T::const_iterator  absfind(const T& arr, const A& value) {
     typename T::const_iterator ibegin = arr.begin();
-    typename T::const_iterator iend = arr.end();
+    typename T::const_iterator iend   = arr.end();
     typename T::const_iterator result = std::find(ibegin, iend, value);
     return result;
 }
