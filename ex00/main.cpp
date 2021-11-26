@@ -72,6 +72,62 @@ void    print_container(const T& c) {
     std::cout << "]" << std::endl;
 }
 
+template<class T>
+void    print_container_over_iterator(T& c, typename T::iterator it) {
+    typename T::iterator be = it;
+    typename T::iterator et = c.end();
+    std::cout << "[";
+    for(; it != et; ++it) {
+        if (it != be) {
+            std::cout << ", ";
+        }
+        std::cout << *it;
+    }
+    std::cout << "]" << std::endl;
+}
+
+template<class T>
+void    print_container_over_riterator(T& c, typename T::reverse_iterator it) {
+    typename T::reverse_iterator be = it;
+    typename T::reverse_iterator et = c.rend();
+    std::cout << "[";
+    for(; it != et; ++it) {
+        if (it != be) {
+            std::cout << ", ";
+        }
+        std::cout << *it;
+    }
+    std::cout << "]" << std::endl;
+}
+
+template<class T>
+void    print_container_over_iterator(const T& c, typename T::const_iterator it) {
+    typename T::const_iterator be = it;
+    typename T::const_iterator et = c.end();
+    std::cout << "[";
+    for(; it != et; ++it) {
+        if (it != be) {
+            std::cout << ", ";
+        }
+        std::cout << *it;
+    }
+    std::cout << "]" << std::endl;
+}
+
+template<class T>
+void    print_container_over_riterator(const T& c, typename T::const_reverse_iterator it) {
+    typename T::const_reverse_iterator be = it;
+    typename T::const_reverse_iterator et = c.rend();
+    std::cout << "[";
+    for(; it != et; ++it) {
+        if (it != be) {
+            std::cout << ", ";
+        }
+        std::cout << *it;
+    }
+    std::cout << "]" << std::endl;
+}
+
 template < class Container >
 void find_test(
     Container& c,
@@ -86,8 +142,16 @@ void find_test(
         say("find 313 from the container.");
         tester("found something",       result_it != c.end(),   true);
         tester("found value is 313",    *result_it,             should_found);
+        std::cout << "after result: ";
+        print_container_over_iterator(c, result_it);
         // *result_it = 424242; // FAIL if a given container is a set.
-        say("find 1 from the container.");
+        typename Container::reverse_iterator reverse_it = easyrfind(c, should_found);
+        say("find 313 from the container REVERSELY...");
+        tester("found something",       reverse_it != c.rend(), true);
+        tester("found value is 313",    *reverse_it,            should_found);
+        std::cout << "after result: ";
+        print_container_over_riterator(c, reverse_it);
+        say("find 1 from the container...");
         result_it = easyfind(c, should_not_found);
         tester("not found 1",           result_it == c.end(),   true);
     }
@@ -96,12 +160,20 @@ void find_test(
         const Container& cc = c;
         std::cout << "a const container is: ";
         print_container(cc);
-        typename Container::const_iterator result_it = easyfind(c, should_found);
-        say("find 313 from the container.");
+        typename Container::const_iterator result_it = easyfind(cc, should_found);
+        say("find 313 from the container...");
         tester("found something",       result_it != cc.end(),  true);
         tester("found value is 313",    *result_it,             should_found);
+        std::cout << "after result: ";
+        print_container_over_iterator(cc, result_it);
         // *result_it = 1; // error: cannot assign to return value because function 'operator*' returns a const value
-        say("find 1 from the container.");
+        typename Container::const_reverse_iterator reverse_it = easyrfind(cc, should_found);
+        say("find 313 from the container REVERSELY...");
+        tester("found something",       reverse_it != cc.rend(), true);
+        tester("found value is 313",    *reverse_it,            should_found);
+        std::cout << "after result: ";
+        print_container_over_riterator(cc, reverse_it);
+        say("find 1 from the container...");
         result_it = easyfind(cc, should_not_found);
         tester("not found 1",           result_it == cc.end(),  true);
     }
@@ -109,12 +181,12 @@ void find_test(
 
 int main() {
     const int args[] = {
-        -10, 100, 313, -15926535
+        -10, 100, 313, -15926535, 313, 2
     };
 
     int should_found = 313;
     int should_not_found = 1;
-    int n = 4;
+    int n = 6;
     try {
         say("");
         say("[ vector ]");
