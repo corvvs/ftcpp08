@@ -21,42 +21,42 @@ class MutantStack: public std::stack<T, _MContainer> {
 
         virtual ~MutantStack() {}
 
-        iterator                begin(void) {
+        virtual iterator                begin(void) {
             _MContainer& mc = this->c;
             return mc.begin();
         }
 
-        iterator                end(void) {
+        virtual iterator                end(void) {
             _MContainer& mc = this->c;
             return mc.end();
         }
 
-        const_iterator          begin(void) const {
+        virtual const_iterator          begin(void) const {
             const _MContainer& mc = this->c;
             return mc.begin();
         }
 
-        const_iterator          end(void) const {
+        virtual const_iterator          end(void) const {
             const _MContainer& mc = this->c;
             return mc.end();
         }
 
-        reverse_iterator        rbegin(void) {
+        virtual reverse_iterator        rbegin(void) {
             _MContainer& mc = this->c;
             return mc.rbegin();
         }
 
-        reverse_iterator        rend(void) {
+        virtual reverse_iterator        rend(void) {
             _MContainer& mc = this->c;
             return mc.rend();
         }
 
-        const_reverse_iterator  rbegin(void) const {
+        virtual const_reverse_iterator  rbegin(void) const {
             const _MContainer& mc = this->c;
             return mc.rbegin();
         }
 
-        const_reverse_iterator  rend(void) const {
+        virtual const_reverse_iterator  rend(void) const {
             const _MContainer& mc = this->c;
             return mc.rend();
         }

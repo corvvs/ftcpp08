@@ -45,10 +45,10 @@ void    tester(
     }
 }
 
-template <class MContainer>
-void    print_stack(MutantStack<int, MContainer > mstack, std::ostream& ost) {
+template <class Stack>
+void    print_stack(Stack mstack, std::ostream& ost) {
     ost << "[";
-    typename MutantStack<int, MContainer >::iterator it = mstack.begin();
+    typename Stack::iterator it = mstack.begin();
     for (; it != mstack.end(); ++it) {
         if (it != mstack.begin()) {
             ost << ", ";
@@ -185,17 +185,26 @@ void    comparation_test(void) {
             e1 = ms1.end();
             typename MS::iterator b2 = ms2.begin();
             typename MS::iterator e2 = ms2.end();
+            std::cout
+                << "size of ms1 is currently 0." << std::endl
+                << "so, ms1.begin() equals ms1.end()." << std::endl
+            ;
+            tester(" ms1(0).begin() == ms1(0).begin()",    b1  ==   b1,  true);
             tester(" ms1(0).begin() == ms1(0).begin()",    b1  ==   b1,  true);
             tester(" ms1(0).begin() == ms1(0).end()",      b1  ==   e1,  true);
             tester(" ms1(0).end()   == ms1(0).end()",      e1  ==   e1,  true);
-
-            tester("(should be ok for deque or vector) ms1(0).begin() == ms2(0).begin()",    b1  ==   b2,  true, true);
-            tester("(should be ok for deque or vector) ms1(0).begin() == ms2(0).end()",      b1  ==   e2,  true, true);
-            tester("(should be ok for deque or vector) ms1(0).end()   == ms2(0).end()",      e1  ==   e2,  true, true);
+            std::cout
+                << "If internal container is vector or deque," << std::endl
+                << "its capacity must be 0 now." << std::endl
+                << "" << std::endl
+            ;
+            tester("(should be KO for list) ms1(0).begin() == ms2(0).begin()",    b1  ==   b2,  true, true);
+            tester("(should be KO for list) ms1(0).begin() == ms2(0).end()",      b1  ==   e2,  true, true);
+            tester("(should be KO for list) ms1(0).end()   == ms2(0).end()",      e1  ==   e2,  true, true);
             tester(" ms2(0).begin() == ms2(0).end()",      b2  ==   e2,  true);
-            tester("(should be ok for deque or vector)&ms1(0).begin() == &ms2(0).begin()", &(*b1) == &(*b2), true, true);
-            tester("(should be ok for deque or vector)&ms1(0).begin() == &ms2(0).end()",   &(*b1) == &(*e2), true, true);
-            tester("(should be ok for deque or vector)&ms1(0).end()   == &ms2(0).end()",   &(*e1) == &(*e2), true, true);
+            tester("(should be KO for list)&ms1(0).begin() == &ms2(0).begin()", &(*b1) == &(*b2), true, true);
+            tester("(should be KO for list)&ms1(0).begin() == &ms2(0).end()",   &(*b1) == &(*e2), true, true);
+            tester("(should be KO for list)&ms1(0).end()   == &ms2(0).end()",   &(*e1) == &(*e2), true, true);
             ms1.push(1);
             std::cout << "pushed 1 into ms1" << std::endl;
             b1 = ms1.begin();
@@ -221,7 +230,7 @@ void    comparation_test(void) {
             MS ms3;
             typename MS::iterator s3 = ms3.begin();
             typename MS::iterator e3 = ms3.end();
-            tester("(should be ok for deque or vector) ms2(0).end()   == ms3(0).end()",      e2  ==   e3,  true, true);
+            tester("(should be KO for list) ms2(0).end()   == ms3(0).end()",      e2  ==   e3,  true, true);
             tester(" ms3(0).start() == ms3(0).end()",      s3  ==   e3,  true);
 
             ms1.pop();
@@ -238,11 +247,6 @@ void    comparation_test(void) {
         b1 = ms1.begin();
         e1 = ms1.end();
         tester(" ms1(1).begin() == ms1(1).begin()",  b1 == b1, true);
-        // say("[ contrast: vector ]");
-        // std::vector<int> vec(0);
-        // tester("vector(0).start() == vector(0).end()", vec.begin() == vec.end(), true);
-        // vec.push_back(1);
-        // tester("vector(1).start() == vector(1).end()", vec.begin() == vec.end(), false);
     } catch (std::exception& e) {
         std::cout
             << Constants::kTextError
@@ -255,15 +259,12 @@ template <class MContainer>
 void    iterator_test(void) {
     std::string result_str;
     try {
-        typedef MutantStack<int, MContainer > MS;
+        typedef MutantStack<std::string, MContainer > MS;
         MS vstack;
-        vstack.push(3);
-        vstack.push(1);
-        vstack.push(4);
-        vstack.push(1);
-        vstack.push(5);
-        vstack.push(9);
-        vstack.push(2);
+        vstack.push("42");
+        vstack.push("tokyo");
+        vstack.push("is");
+        vstack.push("down");
         {
             typename MS::iterator be;
             typename MS::iterator en;
@@ -274,26 +275,29 @@ void    iterator_test(void) {
             rb = vstack.rbegin();
             re = vstack.rend();
             result_str = stringify_by_iterator(be, en);
-            tester("print normally", result_str, std::string("[3, 1, 4, 1, 5, 9, 2]"));
+            tester("print normally", result_str, std::string("[42, tokyo, is, down]"));
             result_str = stringify_by_iterator(rb, re);
-            tester("print reversely", result_str, std::string("[2, 9, 5, 1, 4, 1, 3]"));
-            *be = 4;
+            tester("print reversely", result_str, std::string("[down, is, tokyo, 42]"));
+            std::cout << "assign \"24\" to begin." << std::endl;
+            *be = "24";
             result_str = stringify_by_iterator(be, en);
-            tester("print normally", result_str, std::string("[4, 1, 4, 1, 5, 9, 2]"));
-            *rb = 9;
+            tester("print normally", result_str, std::string("[24, tokyo, is, down]"));
+            std::cout << "assign \"crazy\" to rbegin." << std::endl;
+            *rb = "crazy";
             result_str = stringify_by_iterator(rb, re);
-            tester("print reversely", result_str, std::string("[9, 9, 5, 1, 4, 1, 4]"));
+            tester("print reversely", result_str, std::string("[crazy, is, tokyo, 24]"));
         }
         const MS cstack(vstack);
         {
+            std::cout << "do for const container." << std::endl;
             typename MS::const_iterator be = cstack.begin();
             typename MS::const_iterator en = cstack.end();
             typename MS::const_reverse_iterator rb = cstack.rbegin();
             typename MS::const_reverse_iterator re = cstack.rend();
             result_str = stringify_by_iterator(be, en);
-            tester("print normally", result_str, std::string("[4, 1, 4, 1, 5, 9, 9]"));
+            tester("print normally", result_str, std::string("[24, tokyo, is, crazy]"));
             result_str = stringify_by_iterator(rb, re);
-            tester("print reversely", result_str, std::string("[9, 9, 5, 1, 4, 1, 4]"));
+            tester("print reversely", result_str, std::string("[crazy, is, tokyo, 24]"));
         }
     } catch (std::exception& e) {
         std::cout
@@ -304,24 +308,27 @@ void    iterator_test(void) {
 }
 
 int     main() {
-    say("[ PDF test by deque ]");
+    say("[[[ deque ]]]");
+    say("[ PDF test(deque) ]");
     pdf_test<std::deque<int> >();
-    say("[ PDF test by vector ]");
-    pdf_test<std::vector<int> >();
-    say("[ PDF test by list ]");
-    pdf_test<std::list<int> >();
-
-    say("[ Iterator test by deque ]");
-    iterator_test<std::deque<int> >();
-    say("[ Iterator test by vector ]");
-    iterator_test<std::vector<int> >();
-    say("[ Iterator test by list ]");
-    iterator_test<std::list<int> >();
-
-    say("[ comparation test by deque ]");
+    say("[ Iterator test(deque) ]");
+    iterator_test<std::deque<std::string> >();
+    say("[ comparation test(deque) ]");
     comparation_test<std::deque<int> >();
-    say("[ comparation test by vector ]");
+
+    say("[[[ vector ]]]");
+    say("[ PDF test(vector) ]");
+    pdf_test<std::vector<int> >();
+    say("[ Iterator test(vector) ]");
+    iterator_test<std::vector<std::string> >();
+    say("[ comparation test(vector) ]");
     comparation_test<std::vector<int> >();
-    say("[ comparation test by list ]");
+
+    say("[[[ list ]]]");
+    say("[ PDF test(list) ]");
+    pdf_test<std::list<int> >();
+    say("[ Iterator test(list) ]");
+    iterator_test<std::list<std::string> >();
+    say("[ comparation test(list) ]");
     comparation_test<std::list<int> >();
 }
