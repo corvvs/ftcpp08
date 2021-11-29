@@ -51,28 +51,23 @@ void            Span::addNumber(int item) {
         throw Span::CapacityFullError("this object is full");
     }
     if (shortest_span_ > 0) {
-        std::set<int>::iterator itend = items_.end();
-        if (items_.find(item) != itend) {
-            shortest_span_ = 0;
-        } else {
-            std::set<int>::iterator lb = items_.lower_bound(item);
-            std::set<int>::iterator be = items_.begin();
-            std::set<int>::iterator ed = items_.end();
-            if (lb != ed) {
-                unsigned int span = *lb - item;
-                if (span < shortest_span_) {
-                    shortest_span_ = span;
-                }
+        std::set<int>::iterator be = items_.begin();
+        std::set<int>::iterator lb = items_.upper_bound(item);
+        std::set<int>::iterator ed = items_.end();
+        if (lb != ed) {
+            unsigned int span = *lb - item;
+            if (span < shortest_span_) {
+                shortest_span_ = span;
             }
-            if (lb != be) {
-                --lb;
-                unsigned int span = item - *lb;
-                if (span < shortest_span_) {
-                    shortest_span_ = span;
-                }
-            }
-            items_.insert(item);
         }
+        if (lb != be) {
+            --lb;
+            unsigned int span = item - *lb;
+            if (span < shortest_span_) {
+                shortest_span_ = span;
+            }
+        }
+        items_.insert(item);
     }
     added_ += 1;
     if (stored_max_ < item) {

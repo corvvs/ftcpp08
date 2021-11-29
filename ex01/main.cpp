@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <list>
 #include <sys/time.h>
 #include <ctime>
 #include <cstdlib>
@@ -250,11 +251,13 @@ void    iterator_test() {
         << Constants::kTextReset;
     int N = 1000;
     Span                sp(N);
+    // std::list<int>    vec;
     std::vector<int>    vec;
     for (int i = 0; i < N; i += 1) { 
         vec.push_back(i * 100);
     }
-    sp.addNumbers(vec.begin(), vec.end());
+    // sp.addNumbers(vec.begin(), vec.end());
+    sp.addNumbers(vec);
     tester("shortest is", sp.shortestSpan(), 100u);
     tester("longest is", sp.longestSpan(), 99900u);
 }
